@@ -16,5 +16,5 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface GatewayLogService extends RemoteService {
 	public List<GatewayLog> getList(String fromDate, String toDate, int offSet, int limit);
 	public List<Object> getInitialList(String fromDate, String toDate, int limit);
-	public String getGatewayXMLContent(String fileName)throws Exception;
+	List<String> getGatewayXMLContent(String requestFileName,String responseFileName) throws Exception;
 }

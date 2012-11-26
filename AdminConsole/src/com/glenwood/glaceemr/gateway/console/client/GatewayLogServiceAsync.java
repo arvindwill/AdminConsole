@@ -14,5 +14,5 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface GatewayLogServiceAsync {
     void getList(String fromDate, String toDate, int offSet, int limit, AsyncCallback<List<GatewayLog>> callBack);
 	void getInitialList(String fromDate, String toDate, int limit,AsyncCallback<List<Object>> callback);
-	void getGatewayXMLContent(String fileName, AsyncCallback<String> callback)throws Exception;
+	void getGatewayXMLContent(String requestFileName,String responseFileName,AsyncCallback<List<String>> callback)throws Exception;
 }

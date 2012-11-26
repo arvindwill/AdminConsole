@@ -23,7 +23,7 @@ public class GatewayLogServiceImpl extends RemoteServiceServlet implements Gatew
     public List<GatewayLog> getList(String fromDate, String toDate, int offSet, int limit) {
     	DataBaseUtils dbUtils = null;
     	try{
-    		dbUtils = new DataBaseUtils("java:comp/env/jdbc/gateway");
+    		dbUtils = new DataBaseUtils(this.getServletContext().getInitParameter("connectionString"));
     	}catch(Exception e){
     		e.printStackTrace();
     	}
@@ -41,7 +41,7 @@ public class GatewayLogServiceImpl extends RemoteServiceServlet implements Gatew
 	public List<Object> getInitialList(String fromDate, String toDate, int limit) {
 		DataBaseUtils dbUtils = null;
     	try{
-    		dbUtils = new DataBaseUtils("java:comp/env/jdbc/gateway");
+    		dbUtils = new DataBaseUtils(this.getServletContext().getInitParameter("connectionString"));
     	}catch(Exception e){
     		e.printStackTrace();
     	}
@@ -60,23 +60,38 @@ public class GatewayLogServiceImpl extends RemoteServiceServlet implements Gatew
 	}
 	
 	
-	public String getGatewayXMLContent(String fileName)throws Exception{
+	public List<String> getGatewayXMLContent(String requestFileName, String responseFileName)throws Exception{
         StringBuilder content = new StringBuilder();
-        BufferedReader gatewayin = null;
+        ArrayList<String> result = new ArrayList<String>();
+        BufferedReader bufferedReader = null;
 		try{
 			String rootPath = this.getServletContext().getInitParameter("sharedPath")+"/log";
-			FileInputStream inStream = new FileInputStream(new File(rootPath+"/2012/11/7/11072012171124_request.txt"));
-	        gatewayin = new BufferedReader(new InputStreamReader(inStream));
+			
+			FileInputStream requestInStream = new FileInputStream(new File(rootPath+requestFileName));
+			bufferedReader = new BufferedReader(new InputStreamReader(requestInStream));
 	        String line;
-	        while ((line = gatewayin.readLine()) != null) {
+	        while ((line = bufferedReader.readLine()) != null) {
 	            content.append(line+"\r\n");
 	        }
+	        result.add(content.toString());
+	        requestInStream.close();
+
+			FileInputStream responseInStream = new FileInputStream(new File(rootPath+responseFileName));
+			bufferedReader = new BufferedReader(new InputStreamReader(responseInStream));
+	        line = new String();
+	        content = new StringBuilder();
+	        while ((line = bufferedReader.readLine()) != null) {
+	            content.append(line+"\r\n");
+	        }
+	        result.add(content.toString());
+	        responseInStream.close();
+	        
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
-			gatewayin.close();
+			bufferedReader.close();
 		}
-		return content.toString();
+		return result;
 	}
 	
 }

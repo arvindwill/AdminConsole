@@ -16,11 +16,6 @@
     <welcome-file>HIEConsole.html</welcome-file>
   </welcome-file-list>
   
-  <context-param>
-  	<param-name>connectionString</param-name>
-  	<param-value>jdbc/gateway</param-value>
-  </context-param>
-  
 	<resource-ref>
   		<res-ref-name>jdbc/gateway</res-ref-name>
   		<res-type>javax.sql.DataSource</res-type>
