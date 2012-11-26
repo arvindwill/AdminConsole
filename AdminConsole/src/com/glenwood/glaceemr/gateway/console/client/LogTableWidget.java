@@ -4,15 +4,19 @@ import java.util.List;
 
 import com.glenwood.glaceemr.gateway.console.shared.GatewayLog;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class LogTableWidget {
@@ -66,39 +70,17 @@ public class LogTableWidget {
     	
     	final SingleSelectionModel<GatewayLog> selectionModel = new SingleSelectionModel<GatewayLog>();
     	
-    	table.setSelectionModel(selectionModel);
-    	
-        
-        table.addDomHandler(new ClickHandler() {
+    	selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
-				GatewayLogServiceAsync service = (GatewayLogServiceAsync)GWT.create(GatewayLogService.class);
+			public void onSelectionChange(SelectionChangeEvent event) {
+				GatewayLog selectedLog = selectionModel.getSelectedObject();
+				Window.alert(selectedLog.getTimeStamp());
 				
-				AsyncCallback<String> callBack = new AsyncCallback<String>(){
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert(caught.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                    	Window.alert(result);
-                    }
-                };
-                try {
-                	
-                	GatewayLog selectedLog = selectionModel.getSelectedObject();
-                	if(selectedLog!=null){
-                		Window.alert(selectedLog.getTimeStamp());
-                		service.getGatewayXMLContent("", callBack);
-                	}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
-		}, ClickEvent.getType());
-        
+		});
+    	
+    	table.setSelectionModel(selectionModel);
         return table;
 	}
 }

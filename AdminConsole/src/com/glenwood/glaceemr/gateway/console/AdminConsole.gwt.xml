@@ -21,8 +21,8 @@
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='com.glenwood.glaceemr.gateway.console.client.AdminConsole'/>
-	<stylesheet src="Gateway.css"/>
-	<stylesheet src="GatewayTable.css"/>
+	<stylesheet src="../style/Gateway.css"/>
+	<stylesheet src="../style/GatewayTable.css"/>
 
 
   <!-- Specify the paths for translatable code                    -->
