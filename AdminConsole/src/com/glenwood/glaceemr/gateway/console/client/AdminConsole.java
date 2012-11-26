@@ -168,7 +168,6 @@ public class AdminConsole implements EntryPoint {
                     			public void onSelectionChange(SelectionChangeEvent event) {
                     				GatewayLog selectedLog = selectionModel.getSelectedObject();
                     				try {
-                    					Window.alert(selectedLog.getRequestFileName()+","+selectedLog.getResponseFileName());
                     					getXMLContent(service, selectedLog.getRequestFileName(),selectedLog.getResponseFileName());
                     				} catch (Exception e) {
                     					e.printStackTrace();
@@ -187,8 +186,6 @@ public class AdminConsole implements EntryPoint {
                 service.getList(fromDate.getFormat().format(fromDate, fromDate.getValue()), toDate.getFormat().format(toDate, toDate.getValue()),0,10,callBack);
             }
         });
-        
-
         
         RootPanel rootPanel = RootPanel.get();
         rootPanel.add(vPanel);
