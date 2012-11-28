@@ -5,7 +5,8 @@ import java.util.List;
 import com.glenwood.glaceemr.gateway.console.shared.GatewayLog;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class LogTableWidget extends CellTable<GatewayLog> {
 
@@ -55,13 +56,24 @@ public class LogTableWidget extends CellTable<GatewayLog> {
         this.addColumn(acctIDColumn,"Account Id");
         this.addColumn(userIDColumn,"User Id");
         this.addColumn(IPAddressColumn,"IP Address");
+        
 	}
 	
-	public void updateTableData(List<GatewayLog> data){
-        final ListDataProvider<GatewayLog> dataProvider = new ListDataProvider<GatewayLog>(data);
-    	dataProvider.addDataDisplay(this);
+	public void getList(GatewayLogServiceAsync service, String fromDate, String toDate, final int offSet, int limit){
+		
+		AsyncCallback<List<GatewayLog>> callBack = new AsyncCallback<List<GatewayLog>>(){
+            @Override
+            public void onFailure(Throwable caught) {
+                Window.alert(caught.getMessage());
+            }
+            
+            @Override
+            public void onSuccess(List<GatewayLog> resultObj) {
+            	setRowData(offSet, resultObj);
+            }
+		};
+		service.getList(fromDate, toDate, offSet, limit,callBack);
 	}
-	
 
 	
 	

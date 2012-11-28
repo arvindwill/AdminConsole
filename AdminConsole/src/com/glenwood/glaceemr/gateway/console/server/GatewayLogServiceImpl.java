@@ -20,43 +20,36 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class GatewayLogServiceImpl extends RemoteServiceServlet implements GatewayLogService {
     @Override
-    public List<GatewayLog> getList(String fromDate, String toDate, int offSet, int limit) {
+    public List<GatewayLog> getList(String fromDate, String toDate, int offSet, int limit) throws Exception {
     	DataBaseUtils dbUtils = null;
-    	try{
-    		dbUtils = new DataBaseUtils(this.getServletContext().getInitParameter("connectionString"));
-    	}catch(Exception e){
-    		e.printStackTrace();
-    	}
     	GatewayLogDAO logDAO = new GatewayLogDAO();
     	ArrayList<GatewayLog> list = new ArrayList<GatewayLog>();
     	try{
+    		dbUtils = new DataBaseUtils(this.getServletContext().getInitParameter("connectionString"));
     		list = logDAO.getLog(dbUtils, fromDate, toDate, offSet, limit);
     	}catch(Exception e){
     		e.printStackTrace();
+    	}finally{
+    		dbUtils.destroy();
     	}
         return list;
     }
 
 	@Override
-	public List<Object> getInitialList(String fromDate, String toDate, int limit) {
+	public Integer getInitialCount(String fromDate, String toDate)throws Exception {
 		DataBaseUtils dbUtils = null;
+    	GatewayLogDAO logDAO = new GatewayLogDAO();		
+		int count = 0;
     	try{
     		dbUtils = new DataBaseUtils(this.getServletContext().getInitParameter("connectionString"));
+    		count = logDAO.getLogCount(dbUtils, fromDate, toDate);
+    		return new Integer(count);
     	}catch(Exception e){
     		e.printStackTrace();
+    	}finally{
+    		dbUtils.destroy();
     	}
-    	GatewayLogDAO logDAO = new GatewayLogDAO();
-    	ArrayList<Object> resultObj = new ArrayList<Object>();
-    	ArrayList<GatewayLog> list = new ArrayList<GatewayLog>();
-    	try{
-    		int count = logDAO.getLogCount(dbUtils, fromDate, toDate);
-    		list = logDAO.getLog(dbUtils, fromDate, toDate, 0, limit);
-    		resultObj.add(0,new Integer(count));
-    		resultObj.add(1,list);
-    	}catch(Exception e){
-    		e.printStackTrace();
-    	}
-        return resultObj;
+    	return Integer.valueOf(count); 
 	}
 	
 	
@@ -64,19 +57,20 @@ public class GatewayLogServiceImpl extends RemoteServiceServlet implements Gatew
         StringBuilder content = new StringBuilder();
         ArrayList<String> result = new ArrayList<String>();
         BufferedReader bufferedReader = null;
+        FileInputStream requestInStream = null;
+        FileInputStream responseInStream = null;
 		try{
 			String rootPath = this.getServletContext().getInitParameter("sharedPath")+"/log";
 			
-			FileInputStream requestInStream = new FileInputStream(new File(rootPath+requestFileName));
+			requestInStream = new FileInputStream(new File(rootPath+requestFileName));
 			bufferedReader = new BufferedReader(new InputStreamReader(requestInStream));
 	        String line;
 	        while ((line = bufferedReader.readLine()) != null) {
 	            content.append(line+"\r\n");
 	        }
 	        result.add(content.toString());
-	        requestInStream.close();
 
-			FileInputStream responseInStream = new FileInputStream(new File(rootPath+responseFileName));
+			responseInStream = new FileInputStream(new File(rootPath+responseFileName));
 			bufferedReader = new BufferedReader(new InputStreamReader(responseInStream));
 	        line = new String();
 	        content = new StringBuilder();
@@ -84,11 +78,13 @@ public class GatewayLogServiceImpl extends RemoteServiceServlet implements Gatew
 	            content.append(line+"\r\n");
 	        }
 	        result.add(content.toString());
-	        responseInStream.close();
+	        
 	        
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
+			requestInStream.close();
+			responseInStream.close();
 			bufferedReader.close();
 		}
 		return result;

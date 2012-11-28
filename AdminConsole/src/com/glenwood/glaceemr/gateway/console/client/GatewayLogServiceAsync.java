@@ -13,6 +13,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface GatewayLogServiceAsync {
     void getList(String fromDate, String toDate, int offSet, int limit, AsyncCallback<List<GatewayLog>> callBack);
-	void getInitialList(String fromDate, String toDate, int limit,AsyncCallback<List<Object>> callback);
+	void getInitialCount(String fromDate, String toDate, AsyncCallback<Integer> callback);
 	void getGatewayXMLContent(String requestFileName,String responseFileName,AsyncCallback<List<String>> callback)throws Exception;
 }

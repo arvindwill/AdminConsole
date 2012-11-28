@@ -1,2 +1,0 @@
-serviceClass: com.glenwood.glaceemr.gateway.console.client.GatewayLogService
-path: DC73023571FE2E3F1835F0BFFFF58582.gwt.rpc
